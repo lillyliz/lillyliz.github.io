@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#e8a4c9">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Mi Mami">
+<title>Ver a mi Mami 💜</title>
+<link rel="manifest" href="manifest.json">
+<style>
+  :root {
+    --pink-light: #fbeaf0;
+    --pink-mid: #ed93b1;
+    --pink-strong: #d4537e;
+    --pink-dark: #72243e;
+    --lila-light: #eeedfe;
+    --lila-mid: #afa9ec;
+    --lila-strong: #7f77dd;
+    --lila-dark: #3c3489;
+    --bg: #fdf8fb;
+    --card: #ffffff;
+    --text: #2c2c2a;
+    --text-soft: #888780;
+    --border: rgba(0,0,0,0.08);
+    --radius: 20px;
+    --radius-sm: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; background: var(--bg); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--text); }
+  body { display: flex; flex-direction: column; max-width: 430px; margin: 0 auto; min-height: 100vh; position: relative; overflow-x: hidden; }
+
+  /* HEADER */
+  .header { background: linear-gradient(135deg, #f4c0d1 0%, #cecbf6 100%); padding: 48px 20px 20px; text-align: center; position: relative; }
+  .header-title { font-size: 18px; font-weight: 600; color: #4b1528; }
+  .header-sub { font-size: 13px; color: #72243e; margin-top: 2px; }
+  .btn-admin { position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.55); border: 0.5px solid #ed93b1; border-radius: 8px; padding: 6px 10px; font-size: 18px; cursor: pointer; line-height: 1; }
+  .btn-back { background: none; border: none; color: var(--text-soft); font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 0; margin-bottom: 20px; }
+
+  /* SCREENS */
+  .screen { display: none; flex-direction: column; flex: 1; padding: 20px 16px 32px; }
+  .screen.active { display: flex; }
+
+  /* COUNTDOWN CARD */
+  .countdown-card { background: linear-gradient(135deg, #fbeaf0 0%, #eeedfe 100%); border-radius: var(--radius); border: 1px solid #f4c0d1; padding: 28px 20px; text-align: center; margin-bottom: 16px; }
+  .cat-big { font-size: 48px; margin-bottom: 8px; display: block; line-height: 1; }
+  .days-number { font-size: 80px; font-weight: 700; color: #d4537e; line-height: 1; }
+  .days-label { font-size: 17px; color: #72243e; font-weight: 500; margin-top: 6px; }
+  .next-date-txt { font-size: 13px; color: var(--text-soft); margin-top: 8px; }
+  .today-msg { font-size: 22px; font-weight: 600; color: #d4537e; line-height: 1.3; }
+
+  /* BUTTONS */
+  .btn-big { width: 100%; padding: 18px; border-radius: var(--radius-sm); border: none; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; transition: transform 0.1s, opacity 0.1s; }
+  .btn-big:active { transform: scale(0.97); opacity: 0.85; }
+  .btn-quiero { background: linear-gradient(135deg, #f4c0d1 0%, #cecbf6 100%); color: #4b1528; }
+  .btn-visitas { background: var(--card); color: var(--text); border: 1px solid var(--border); }
+
+  /* VISIT LIST */
+  .section-label { font-size: 12px; font-weight: 600; color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.8px; margin: 4px 0 10px; }
+  .visit-item { display: flex; align-items: center; gap: 12px; padding: 14px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--card); margin-bottom: 8px; }
+  .visit-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .dot-mama { background: #d4537e; }
+  .dot-special { background: #7f77dd; }
+  .dot-birthday { background: #ef9f27; }
+  .visit-info { flex: 1; min-width: 0; }
+  .visit-title { font-size: 14px; font-weight: 500; color: var(--text); }
+  .visit-sub { font-size: 12px; color: var(--text-soft); margin-top: 2px; }
+  .visit-days { font-size: 12px; font-weight: 600; color: #7f77dd; white-space: nowrap; }
+
+  /* WISH SCREEN */
+  .wish-intro { text-align: center; margin-bottom: 20px; }
+  .wish-intro .cat { font-size: 40px; }
+  .wish-intro p { font-size: 16px; font-weight: 500; color: var(--text); margin-top: 8px; }
+  .wish-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .wish-btn { padding: 18px 10px; border-radius: var(--radius-sm); border: 1px solid #f4c0d1; background: #fbeaf0; color: #72243e; font-size: 14px; font-weight: 500; cursor: pointer; text-align: center; line-height: 1.4; transition: background 0.15s; }
+  .wish-btn:active { background: #f4c0d1; }
+  .wish-confirm { background: #eeedfe; border: 1px solid #afa9ec; border-radius: var(--radius-sm); padding: 20px; text-align: center; display: none; margin-top: 4px; }
+  .wish-confirm-msg { font-size: 16px; color: #3c3489; font-weight: 500; margin-bottom: 14px; line-height: 1.4; }
+  .btn-wa { background: #25d366; color: white; border: none; border-radius: var(--radius-sm); padding: 14px 20px; font-size: 15px; font-weight: 600; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+  /* PIN */
+  .pin-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; padding: 40px 20px; }
+  .pin-title { font-size: 17px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+  .pin-sub { font-size: 13px; color: var(--text-soft); }
+  .pin-dots { display: flex; gap: 14px; margin: 24px 0; }
+  .pin-dot { width: 14px; height: 14px; border-radius: 50%; background: var(--border); border: 1.5px solid #ed93b1; transition: background 0.15s; }
+  .pin-dot.filled { background: #d4537e; border-color: #d4537e; }
+  .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 240px; }
+  .num-btn { padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 22px; font-weight: 400; cursor: pointer; transition: background 0.1s; }
+  .num-btn:active { background: #f4c0d1; }
+  .pin-error { color: #d85a30; font-size: 13px; margin-top: 10px; display: none; }
+
+  /* ADMIN */
+  .tab-bar { display: flex; background: rgba(0,0,0,0.05); border-radius: var(--radius-sm); padding: 3px; margin-bottom: 16px; }
+  .tab { flex: 1; padding: 8px; font-size: 12px; font-weight: 500; color: var(--text-soft); cursor: pointer; text-align: center; border: none; background: none; border-radius: 10px; transition: all 0.15s; }
+  .tab.active { background: var(--card); color: var(--text); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .admin-section { display: none; }
+  .admin-section.active { display: block; }
+  .form-label { font-size: 13px; color: var(--text-soft); margin-bottom: 6px; display: block; }
+  .form-group { margin-bottom: 14px; }
+  .form-input, .form-select { width: 100%; padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 14px; appearance: none; -webkit-appearance: none; }
+  .form-input:focus, .form-select:focus { outline: none; border-color: #ed93b1; }
+  .btn-save { background: #d4537e; color: white; border: none; border-radius: var(--radius-sm); padding: 14px; width: 100%; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 4px; }
+  .btn-delete { background: none; border: none; color: #ccc; font-size: 18px; cursor: pointer; padding: 4px 8px; }
+  .btn-delete:active { color: #d85a30; }
+  .success-toast { background: #eaf3de; border: 1px solid #97c459; border-radius: var(--radius-sm); padding: 10px 14px; font-size: 13px; color: #3b6d11; margin-top: 10px; display: none; text-align: center; }
+  .notif-item { padding: 12px 14px; border-radius: var(--radius-sm); background: #eeedfe; border: 1px solid #afa9ec; margin-bottom: 8px; }
+  .notif-text { font-size: 14px; color: #3c3489; font-weight: 500; }
+  .notif-time { font-size: 11px; color: #7f77dd; margin-top: 3px; }
+  .empty-state { text-align: center; padding: 32px 20px; color: var(--text-soft); font-size: 14px; }
+
+  /* LOADING */
+  #loading { position: fixed; inset: 0; background: linear-gradient(135deg, #fbeaf0 0%, #eeedfe 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999; transition: opacity 0.4s; }
+  #loading .cat { font-size: 56px; margin-bottom: 12px; }
+  #loading p { font-size: 15px; color: #72243e; font-weight: 500; }
+  #loading.hidden { opacity: 0; pointer-events: none; }
+
+  /* OFFLINE BANNER */
+  #offline-banner { display: none; background: #faeeda; border-bottom: 1px solid #fac775; padding: 8px 16px; text-align: center; font-size: 13px; color: #633806; }
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <span class="cat">🐱</span>
+  <p>Cargando tu app...</p>
+</div>
+
+<div id="offline-banner">Sin conexión — mostrando datos guardados</div>
+
+<!-- HOME -->
+<div id="screen-home" class="screen">
+  <div class="header">
+    <div class="header-title">Ver a mi Mami 💜</div>
+    <div class="header-sub">Tu app especial</div>
+    <button class="btn-admin" onclick="showPin()">🐾</button>
+  </div>
+  <div style="padding: 20px 16px 32px; display: flex; flex-direction: column; flex: 1;">
+    <div class="countdown-card" id="countdown-card">
+      <span class="cat-big">🐱</span>
+      <div id="days-display"></div>
+      <div id="next-date-display" class="next-date-txt"></div>
+    </div>
+    <button class="btn-big btn-quiero" onclick="showScreen('screen-quiero')">💜 Quiero ver a mi mami</button>
+    <button class="btn-big btn-visitas" onclick="showScreen('screen-visitas')">📅 Mis próximas visitas</button>
+  </div>
+</div>
+
+<!-- VISITAS -->
+<div id="screen-visitas" class="screen">
+  <div class="header">
+    <div class="header-title">Mis visitas</div>
+    <div class="header-sub">Cuándo veo a mi mami</div>
+  </div>
+  <div style="padding: 20px 16px 32px; flex: 1;">
+    <button class="btn-back" onclick="showScreen('screen-home')">← volver</button>
+    <div class="section-label">Próximas visitas</div>
+    <div id="visit-list"></div>
+  </div>
+</div>
+
+<!-- QUIERO VER A MI MAMI -->
+<div id="screen-quiero" class="screen">
+  <div class="header">
+    <div class="header-title">Quiero ver a mi mami</div>
+    <div class="header-sub">Le mando un mensaje</div>
+  </div>
+  <div style="padding: 20px 16px 32px; flex: 1;">
+    <button class="btn-back" onclick="showScreen('screen-home')">← volver</button>
+    <div class="wish-intro">
+      <div class="cat">🐱</div>
+      <p>¿Qué le quieres decir?</p>
+    </div>
+    <div class="wish-grid">
+      <button class="wish-btn" onclick="selectWish('La extraño mucho 💜')">La extraño mucho 💜</button>
+      <button class="wish-btn" onclick="selectWish('Quiero contarle algo 🌟')">Quiero contarle algo 🌟</button>
+      <button class="wish-btn" onclick="selectWish('Quiero un abrazo 🤗')">Quiero un abrazo 🤗</button>
+      <button class="wish-btn" onclick="selectWish('Solo quiero verla 🌸')">Solo quiero verla 🌸</button>
+    </div>
+    <div class="wish-confirm" id="wish-confirm">
+      <div class="wish-confirm-msg" id="wish-msg"></div>
+      <button class="btn-wa" onclick="sendWish()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Enviarle por WhatsApp a mi mami
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- PIN -->
+<div id="screen-pin" class="screen">
+  <div class="header">
+    <div class="header-title">Panel de mamá</div>
+    <div class="header-sub">Ingresa tu código</div>
+  </div>
+  <div class="pin-wrap">
+    <div class="pin-dots">
+      <div class="pin-dot" id="pd0"></div>
+      <div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div>
+      <div class="pin-dot" id="pd3"></div>
+    </div>
+    <div class="numpad">
+      <button class="num-btn" onclick="pinInput('1')">1</button>
+      <button class="num-btn" onclick="pinInput('2')">2</button>
+      <button class="num-btn" onclick="pinInput('3')">3</button>
+      <button class="num-btn" onclick="pinInput('4')">4</button>
+      <button class="num-btn" onclick="pinInput('5')">5</button>
+      <button class="num-btn" onclick="pinInput('6')">6</button>
+      <button class="num-btn" onclick="pinInput('7')">7</button>
+      <button class="num-btn" onclick="pinInput('8')">8</button>
+      <button class="num-btn" onclick="pinInput('9')">9</button>
+      <button class="num-btn" onclick="pinClear()" style="font-size:16px;">⌫</button>
+      <button class="num-btn" onclick="pinInput('0')">0</button>
+      <button class="num-btn" onclick="showScreen('screen-home')" style="font-size:14px; color: var(--text-soft);">✕</button>
+    </div>
+    <div class="pin-error" id="pin-error">Código incorrecto</div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="screen-admin" class="screen">
+  <div class="header">
+    <div class="header-title">Panel de mamá 🐾</div>
+    <div class="header-sub">Solo vos podés ver esto</div>
+  </div>
+  <div style="padding: 20px 16px 32px; flex: 1;">
+    <button class="btn-back" onclick="showScreen('screen-home')">← volver</button>
+    <div class="tab-bar">
+      <button class="tab active" id="tab-btn-add" onclick="switchTab('tab-add')">Agregar visita</button>
+      <button class="tab" id="tab-btn-notifs" onclick="switchTab('tab-notifs')">Julieta te llama</button>
+      <button class="tab" id="tab-btn-list" onclick="switchTab('tab-list')">Ver todas</button>
+    </div>
+
+    <div id="tab-add" class="admin-section active">
+      <div class="form-group">
+        <label class="form-label">Tipo de evento</label>
+        <select class="form-select" id="event-type">
+          <option value="mama">Visita con mamá</option>
+          <option value="asistentes">Asistentes sociales</option>
+          <option value="special">Evento especial</option>
+          <option value="birthday">Cumpleaños</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Fecha de inicio</label>
+        <input type="date" class="form-input" id="event-date">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Fecha de término (si dura más de un día)</label>
+        <input type="date" class="form-input" id="event-date-end">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nota para Julieta</label>
+        <input type="text" class="form-input" id="event-note" placeholder="ej: vamos al parque">
+      </div>
+      <button class="btn-save" onclick="addEvent()">Guardar visita</button>
+      <div class="success-toast" id="add-success">✓ Visita guardada — Julieta ya puede verla</div>
+    </div>
+
+    <div id="tab-notifs" class="admin-section">
+      <div class="section-label">Solicitudes de Julieta</div>
+      <div id="notif-list"></div>
+    </div>
+
+    <div id="tab-list" class="admin-section">
+      <div class="section-label">Todos los eventos</div>
+      <div id="admin-event-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+<script>
+// ─── FIREBASE CONFIG ────────────────────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyArYvg4cnkllmVTMTpiuZHULEdW6p4dvsw",
+  authDomain: "julieta-mami.firebaseapp.com",
+  databaseURL: "https://julieta-mami-default-rtdb.firebaseio.com",
+  projectId: "julieta-mami",
+  storageBucket: "julieta-mami.firebasestorage.app",
+  messagingSenderId: "43175701003",
+  appId: "1:43175701003:web:dc5f4234cffc402c05350e"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ─── CONSTANTES ─────────────────────────────────────────────────────────────
+const MAMA_NUMBER = '56986315461';
+const PIN = '2503';
+const TYPES = {
+  mama:       { label: 'Visita con mamá',        dot: 'dot-mama',    emoji: '💜' },
+  asistentes: { label: 'Asistentes sociales',    dot: 'dot-special', emoji: '🏛️' },
+  special:    { label: 'Evento especial',         dot: 'dot-special', emoji: '🌟' },
+  birthday:   { label: 'Cumpleaños',             dot: 'dot-birthday',emoji: '🎂' }
+};
+
+// ─── ESTADO LOCAL (caché offline) ───────────────────────────────────────────
+let localEvents = [];
+let localWishes = [];
+let selectedWishText = '';
+
+// ─── UTILIDADES DE FECHA ────────────────────────────────────────────────────
+function daysUntil(dateStr) {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const [y,m,d] = dateStr.split('-').map(Number);
+  return Math.round((new Date(y,m-1,d) - today) / 86400000);
+}
+
+function formatDate(str) {
+  const [y,m,d] = str.split('-').map(Number);
+  const date = new Date(y,m-1,d);
+  const days = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const months = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  return days[date.getDay()] + ' ' + d + ' ' + months[m-1];
+}
+
+function upcomingEvents() {
+  return localEvents
+    .filter(e => {
+      const d1 = daysUntil(e.date);
+      const d2 = e.dateEnd ? daysUntil(e.dateEnd) : d1;
+      return d1 >= 0 || d2 >= 0;
+    })
+    .sort((a,b) => a.date.localeCompare(b.date));
+}
+
+// ─── SCREENS ─────────────────────────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+  if (id === 'screen-home')    renderHome();
+  if (id === 'screen-visitas') renderVisitas();
+  if (id === 'screen-admin')   renderAdmin();
+}
+
+// ─── HOME ─────────────────────────────────────────────────────────────────
+function renderHome() {
+  const upcoming = upcomingEvents();
+  const next = upcoming[0];
+  const daysDiv = document.getElementById('days-display');
+  const dateDiv = document.getElementById('next-date-display');
+
+  if (!next) {
+    daysDiv.innerHTML = '<div class="today-msg">Pronto habrá visitas 🌸</div>';
+    dateDiv.textContent = 'Tu mamá las cargará pronto';
+    return;
+  }
+
+  const diff = daysUntil(next.date);
+  const dateStr = next.dateEnd
+    ? formatDate(next.date) + ' → ' + formatDate(next.dateEnd)
+    : formatDate(next.date);
+  const note = next.note ? ' · ' + next.note : '';
+
+  if (diff === 0) {
+    daysDiv.innerHTML = '<div class="today-msg">¡HOY es el día! 🎉<br>¡Vas a ver a tu mami!</div>';
+  } else if (diff === 1) {
+    daysDiv.innerHTML = '<div class="days-number">1</div><div class="days-label">día para ver a tu mami 💜</div>';
+  } else {
+    daysDiv.innerHTML = '<div class="days-number">' + diff + '</div><div class="days-label">días para ver a tu mami 💜</div>';
+  }
+  dateDiv.textContent = dateStr + note;
+}
+
+// ─── VISITAS ──────────────────────────────────────────────────────────────
+function renderVisitas() {
+  const list = document.getElementById('visit-list');
+  const upcoming = upcomingEvents();
+  if (!upcoming.length) {
+    list.innerHTML = '<div class="empty-state">Aún no hay visitas cargadas 🌸</div>';
+    return;
+  }
+  list.innerHTML = upcoming.map(e => {
+    const t = TYPES[e.type] || TYPES.mama;
+    const diff = daysUntil(e.date);
+    const countStr = diff === 0 ? '¡Hoy!' : diff === 1 ? 'Mañana' : 'En ' + diff + ' días';
+    const dateStr = e.dateEnd
+      ? formatDate(e.date) + ' → ' + formatDate(e.dateEnd)
+      : formatDate(e.date);
+    return '<div class="visit-item">' +
+      '<div class="visit-dot ' + t.dot + '"></div>' +
+      '<div class="visit-info">' +
+        '<div class="visit-title">' + t.emoji + ' ' + t.label + '</div>' +
+        '<div class="visit-sub">' + dateStr + (e.note ? ' · ' + e.note : '') + '</div>' +
+      '</div>' +
+      '<div class="visit-days">' + countStr + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ─── WISH ─────────────────────────────────────────────────────────────────
+function selectWish(text) {
+  selectedWishText = text;
+  document.getElementById('wish-msg').textContent = '"' + text + '"';
+  document.getElementById('wish-confirm').style.display = 'block';
+
+  // Guardar en Firebase
+  const wish = { text, ts: new Date().toISOString() };
+  db.ref('wishes').push(wish).catch(console.error);
+
+  // Notificación push si está permitida
+  if ('Notification' in window && Notification.permission === 'granted') {
+    new Notification('Julieta quiere verte 🐱', { body: text });
+  }
+}
+
+function sendWish() {
+  const msg = encodeURIComponent('Mami, ' + selectedWishText);
+  window.open('https://wa.me/' + MAMA_NUMBER + '?text=' + msg, '_blank');
+}
+
+// ─── PIN ──────────────────────────────────────────────────────────────────
+let pinBuffer = '';
+
+function showPin() {
+  pinBuffer = '';
+  updatePinDots();
+  document.getElementById('pin-error').style.display = 'none';
+  showScreen('screen-pin');
+}
+
+function pinInput(d) {
+  if (pinBuffer.length >= 4) return;
+  pinBuffer += d;
+  updatePinDots();
+  if (pinBuffer.length === 4) {
+    setTimeout(() => {
+      if (pinBuffer === PIN) {
+        showScreen('screen-admin');
+      } else {
+        document.getElementById('pin-error').style.display = 'block';
+        pinBuffer = '';
+        updatePinDots();
+      }
+    }, 200);
+  }
+}
+
+function pinClear() {
+  pinBuffer = pinBuffer.slice(0,-1);
+  updatePinDots();
+}
+
+function updatePinDots() {
+  for (let i = 0; i < 4; i++) {
+    const el = document.getElementById('pd' + i);
+    el.classList.toggle('filled', i < pinBuffer.length);
+  }
+}
+
+// ─── ADMIN TABS ───────────────────────────────────────────────────────────
+function switchTab(id) {
+  document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById('tab-btn-' + id.replace('tab-','')).classList.add('active');
+  if (id === 'tab-notifs') renderNotifs();
+  if (id === 'tab-list')   renderAdminList();
+}
+
+// ─── ADMIN — AGREGAR EVENTO ───────────────────────────────────────────────
+function addEvent() {
+  const type    = document.getElementById('event-type').value;
+  const date    = document.getElementById('event-date').value;
+  const dateEnd = document.getElementById('event-date-end').value || null;
+  const note    = document.getElementById('event-note').value.trim() || null;
+  if (!date) return;
+
+  const event = { type, date, note, confirmed: true };
+  if (dateEnd) event.dateEnd = dateEnd;
+
+  db.ref('events').push(event)
+    .then(() => {
+      document.getElementById('event-date').value = '';
+      document.getElementById('event-date-end').value = '';
+      document.getElementById('event-note').value = '';
+      const toast = document.getElementById('add-success');
+      toast.style.display = 'block';
+      setTimeout(() => toast.style.display = 'none', 3000);
+    })
+    .catch(err => alert('Error al guardar: ' + err.message));
+}
+
+// ─── ADMIN — LISTA DE EVENTOS ─────────────────────────────────────────────
+function renderAdmin() {
+  renderAdminList();
+}
+
+function renderAdminList() {
+  const list = document.getElementById('admin-event-list');
+  const sorted = [...localEvents].sort((a,b) => a.date.localeCompare(b.date));
+  if (!sorted.length) {
+    list.innerHTML = '<div class="empty-state">Sin eventos cargados</div>';
+    return;
+  }
+  list.innerHTML = sorted.map(e => {
+    const t = TYPES[e.type] || TYPES.mama;
+    const dateStr = e.dateEnd
+      ? formatDate(e.date) + ' → ' + formatDate(e.dateEnd)
+      : formatDate(e.date);
+    return '<div class="visit-item">' +
+      '<div class="visit-dot ' + t.dot + '"></div>' +
+      '<div class="visit-info">' +
+        '<div class="visit-title">' + t.label + '</div>' +
+        '<div class="visit-sub">' + dateStr + (e.note ? ' · ' + e.note : '') + '</div>' +
+      '</div>' +
+      '<button class="btn-delete" onclick="deleteEvent(\'' + e._key + '\')">✕</button>' +
+    '</div>';
+  }).join('');
+}
+
+function deleteEvent(key) {
+  db.ref('events/' + key).remove().catch(console.error);
+}
+
+// ─── ADMIN — SOLICITUDES ──────────────────────────────────────────────────
+function renderNotifs() {
+  const list = document.getElementById('notif-list');
+  if (!localWishes.length) {
+    list.innerHTML = '<div class="empty-state">Julieta aún no ha enviado solicitudes 🌸</div>';
+    return;
+  }
+  const sorted = [...localWishes].reverse();
+  list.innerHTML = sorted.map(w => {
+    const dt = new Date(w.ts);
+    const timeStr = dt.toLocaleDateString('es-CL') + ' ' + dt.toLocaleTimeString('es-CL', {hour:'2-digit',minute:'2-digit'});
+    return '<div class="notif-item">' +
+      '<div class="notif-text">' + w.text + '</div>' +
+      '<div class="notif-time">' + timeStr + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ─── FIREBASE LISTENERS (tiempo real) ────────────────────────────────────
+function initFirebase() {
+  // Eventos
+  db.ref('events').on('value', snap => {
+    localEvents = [];
+    snap.forEach(child => {
+      localEvents.push({ ...child.val(), _key: child.key });
+    });
+    // Cargar eventos por defecto si está vacío
+    if (localEvents.length === 0) seedDefaultEvents();
+    renderHome();
+    renderVisitas();
+    renderAdminList();
+  });
+
+  // Solicitudes de Julieta
+  db.ref('wishes').on('value', snap => {
+    localWishes = [];
+    snap.forEach(child => {
+      localWishes.push(child.val());
+    });
+    renderNotifs();
+  });
+}
+
+// ─── EVENTOS POR DEFECTO ──────────────────────────────────────────────────
+function seedDefaultEvents() {
+  const defaults = [
+    { type: 'mama',       date: '2026-05-01', dateEnd: '2026-05-03', note: 'Fin de semana juntas',         confirmed: true },
+    { type: 'asistentes', date: '2026-05-07', note: 'Visita asistentes sociales',                          confirmed: true },
+    { type: 'mama',       date: '2026-05-15', dateEnd: '2026-05-16', note: 'Fin de semana con mamá',       confirmed: true },
+    { type: 'mama',       date: '2026-05-22', note: 'Jueves con mamá',                                     confirmed: true },
+    { type: 'mama',       date: '2026-05-29', dateEnd: '2026-05-30', note: 'Fin de semana con mamá',       confirmed: true }
+  ];
+  defaults.forEach(e => db.ref('events').push(e));
+}
+
+// ─── OFFLINE DETECTION ────────────────────────────────────────────────────
+window.addEventListener('online',  () => document.getElementById('offline-banner').style.display = 'none');
+window.addEventListener('offline', () => document.getElementById('offline-banner').style.display = 'block');
+
+// ─── NOTIFICACIONES PUSH ──────────────────────────────────────────────────
+if ('Notification' in window && Notification.permission === 'default') {
+  Notification.requestPermission();
+}
+
+// ─── SERVICE WORKER ───────────────────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(console.error);
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────
+initFirebase();
+showScreen('screen-home');
+
+setTimeout(() => {
+  document.getElementById('loading').classList.add('hidden');
+}, 1200);
+</script>
+</body>
+</html>
