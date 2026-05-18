@@ -166,7 +166,7 @@
     <button class="btn-back" onclick="showScreen('screen-home')">← volver</button>
     <div class="legend-grid">
       <div class="legend-item"><div class="legend-dot" style="background:#d4537e"></div>Con mamá (fin de semana)</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#c067c4"></div>Con mamá (martes)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#c067c4"></div>Con mamá (jueves)</div>
       <div class="legend-item"><div class="legend-dot" style="background:#2eb89a"></div>Vacaciones</div>
       <div class="legend-item"><div class="legend-dot" style="background:#e06c1b"></div>Festivos especiales</div>
       <div class="legend-item"><div class="legend-dot" style="background:#ef9f27"></div>Cumpleaños</div>
@@ -257,7 +257,7 @@
         <label class="form-label">Tipo de evento</label>
         <select class="form-select" id="event-type">
           <option value="mama">Visita con mamá (fin de semana)</option>
-          <option value="mama-martes">Visita con mamá (martes)</option>
+          <option value="mama-martes">Visita con mamá (jueves)</option>
           <option value="vacacion">Vacaciones</option>
           <option value="festivo">Festivo especial</option>
           <option value="birthday">Cumpleaños</option>
@@ -352,7 +352,7 @@ const MAMA_NUMBER = '56986315461';
 const PIN = '2503';
 const TYPES = {
   mama:         { label: 'Con mamá (fin de semana)', dot: 'dot-mama',     emoji: '💜' },
-  'mama-martes':{ label: 'Con mamá (martes)',        dot: 'dot-special',  emoji: '💜' },
+  'mama-martes':{ label: 'Con mamá (jueves)',         dot: 'dot-special',  emoji: '💜' },
   vacacion:     { label: 'Vacaciones',               dot: 'dot-vacacion', emoji: '🌊' },
   festivo:      { label: 'Día especial',             dot: 'dot-festivo',  emoji: '🎉' },
   birthday:     { label: 'Cumpleaños',               dot: 'dot-birthday', emoji: '🎂' },
@@ -411,78 +411,60 @@ function upcomingEvents() {
 }
 
 // ─── GENERADOR DEL AVENIMIENTO ───────────────────────────────────────────────
-// Reglas del acuerdo judicial RIT C-552-2023
-// Primer fin de semana de mamá: viernes 27 sept 2024
-// Primer martes de mamá: martes 01 oct 2024
+// Anclas reales confirmadas:
+// Finde de mamá: viernes 15 mayo 2026 → domingo 17 mayo 2026
+// Jueves de mamá: jueves 21 mayo 2026 (semana intermedia, 16:00–21:00)
 
 function generateAvenimiento(year) {
   const events = [];
 
-  // ── 1. RÉGIMEN ORDINARIO: fines de semana ──
-  // Inicio: viernes 27 sept 2024. Semana por medio.
-  // Calcular el primer viernes del año dado que le corresponde a mamá.
-  const anclaFin = new Date(2024, 8, 27); // 27 sept 2024 = viernes de mamá
-  const inicioYear = new Date(year, 0, 1);
+  // ── 1. FINES DE SEMANA: viernes→domingo, semana por medio ──
+  // Ancla: viernes 15 mayo 2026
+  const anclaVie = new Date(2026, 4, 15); // 15 mayo 2026
 
-  // Encontrar primer viernes >= 1 enero del año
-  let primViernesMama = new Date(anclaFin);
-  while (primViernesMama < inicioYear) {
-    primViernesMama.setDate(primViernesMama.getDate() + 14);
-  }
-  // Si saltamos demasiado (el año anterior el primer viernes válido sería en año)
-  // ajustar si es necesario que sea del año correcto
-  let viernesCursor = new Date(anclaFin);
-  // ir al primer viernes de mamá en el año
-  while (viernesCursor.getFullYear() < year) viernesCursor.setDate(viernesCursor.getDate()+14);
-  if (viernesCursor.getFullYear() > year) viernesCursor.setDate(viernesCursor.getDate()-14);
-  // ahora viernesCursor es el primer viernes de mamá en o antes del año
-  if (viernesCursor.getFullYear() < year) viernesCursor.setDate(viernesCursor.getDate()+14);
+  // Retroceder o avanzar hasta tener el primer viernes de mamá en el año pedido
+  let v = new Date(anclaVie);
+  // Ir al año correcto saltando de a 14 días
+  while (v.getFullYear() > year) v.setDate(v.getDate() - 14);
+  while (v.getFullYear() < year || (v.getFullYear() === year && false)) v.setDate(v.getDate() + 14);
+  // Ahora retroceder hasta el primero dentro del año
+  while (v.getFullYear() === year) v.setDate(v.getDate() - 14);
+  v.setDate(v.getDate() + 14); // primer viernes de mamá en el año
 
-  // Generar todos los fines de semana del año
-  let v = new Date(viernesCursor);
-  while (v.getFullYear() <= year) {
-    if (v.getFullYear() === year) {
-      const mes = v.getMonth() + 1;
-      // Determinar horario retorno: otoño/invierno (mar-ago) 18:00 / primavera/verano (sep-feb) 20:00
-      const esPrimaveraVerano = mes <= 2 || mes >= 9;
-      const horaRetorno = esPrimaveraVerano ? '20:00' : '18:00';
-      const domingo = new Date(v); domingo.setDate(v.getDate() + 2);
-      // Verificar que no sea semana de vacaciones de invierno (julio) ni febrero (verano)
-      // Se maneja abajo — simplemente los cargo todos y luego las vacaciones sobreescriben
-      events.push({
-        type: 'mama',
-        date: toStr(v),
-        dateEnd: toStr(domingo),
-        note: 'Retiro viernes 18:45 → domingo ' + horaRetorno,
-        confirmed: true,
-        source: 'avenimiento'
-      });
-    }
+  while (v.getFullYear() === year) {
+    const dom = new Date(v); dom.setDate(v.getDate() + 2);
+    const mes = v.getMonth() + 1;
+    const horaRetorno = (mes <= 2 || mes >= 9) ? '20:00' : '18:00';
+    events.push({
+      type: 'mama',
+      date: toStr(v),
+      dateEnd: toStr(dom),
+      note: 'Viernes 18:45 → domingo ' + horaRetorno,
+      confirmed: true,
+      source: 'avenimiento'
+    });
     v.setDate(v.getDate() + 14);
   }
 
-  // ── 2. RÉGIMEN ORDINARIO: martes alternos ──
-  // Inicio: martes 01 oct 2024. Martes por medio.
-  const anclaMar = new Date(2024, 9, 1); // 1 oct 2024
-  let martesCursor = new Date(anclaMar);
-  while (martesCursor.getFullYear() < year) martesCursor.setDate(martesCursor.getDate()+14);
-  if (martesCursor.getFullYear() > year) martesCursor.setDate(martesCursor.getDate()-14);
-  if (martesCursor.getFullYear() < year) martesCursor.setDate(martesCursor.getDate()+14);
+  // ── 2. JUEVES ALTERNOS: 16:00–21:00, semana sin finde ──
+  // Ancla: jueves 21 mayo 2026
+  const anclaJue = new Date(2026, 4, 21); // 21 mayo 2026
 
-  let m = new Date(martesCursor);
-  while (m.getFullYear() <= year) {
-    if (m.getFullYear() === year) {
-      const miercoles = new Date(m); miercoles.setDate(m.getDate() + 1);
-      events.push({
-        type: 'mama-martes',
-        date: toStr(m),
-        dateEnd: toStr(miercoles),
-        note: 'Retiro martes 18:45 → miércoles 14:00',
-        confirmed: true,
-        source: 'avenimiento'
-      });
-    }
-    m.setDate(m.getDate() + 14);
+  let j = new Date(anclaJue);
+  while (j.getFullYear() > year) j.setDate(j.getDate() - 14);
+  while (j.getFullYear() < year) j.setDate(j.getDate() + 14);
+  while (j.getFullYear() === year) j.setDate(j.getDate() - 14);
+  j.setDate(j.getDate() + 14);
+
+  while (j.getFullYear() === year) {
+    events.push({
+      type: 'mama-martes',
+      date: toStr(j),
+      note: 'Jueves con mamá · 16:00–21:00',
+      confirmed: true,
+      source: 'avenimiento'
+    });
+    j.setDate(j.getDate() + 14);
   }
 
   // ── 3. VACACIONES DE INVIERNO ──
@@ -908,4 +890,3 @@ setTimeout(() => document.getElementById('loading').classList.add('hidden'), 120
 </script>
 </body>
 </html>
-
