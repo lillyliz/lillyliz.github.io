@@ -418,18 +418,25 @@ function upcomingEvents() {
 function generateAvenimiento(year) {
   const events = [];
 
-  // ── 1. FINES DE SEMANA: viernes→domingo, semana por medio ──
-  // Ancla: viernes 15 mayo 2026
-  const anclaVie = new Date(2026, 4, 15); // 15 mayo 2026
+  // Función auxiliar: desde una ancla, encontrar la primera ocurrencia en el año dado
+  function primerEnAnio(ancla, yr) {
+    // ancla es Date. Moverse de a 14 días hasta estar en yr
+    let d = new Date(ancla);
+    // Si ancla es posterior al año buscado, retroceder
+    while (d.getFullYear() > yr) d.setDate(d.getDate() - 14);
+    // Si ancla es anterior al año buscado, avanzar
+    while (d.getFullYear() < yr) d.setDate(d.getDate() + 14);
+    // Ahora estamos en yr — retroceder hasta salir del año
+    while (d.getFullYear() === yr) d.setDate(d.getDate() - 14);
+    // Un paso adelante: primer día del patrón en yr
+    d.setDate(d.getDate() + 14);
+    return d;
+  }
 
-  // Retroceder o avanzar hasta tener el primer viernes de mamá en el año pedido
-  let v = new Date(anclaVie);
-  // Ir al año correcto saltando de a 14 días
-  while (v.getFullYear() > year) v.setDate(v.getDate() - 14);
-  while (v.getFullYear() < year || (v.getFullYear() === year && false)) v.setDate(v.getDate() + 14);
-  // Ahora retroceder hasta el primero dentro del año
-  while (v.getFullYear() === year) v.setDate(v.getDate() - 14);
-  v.setDate(v.getDate() + 14); // primer viernes de mamá en el año
+  // ── 1. FINES DE SEMANA: viernes→domingo, semana por medio ──
+  // Ancla confirmada: viernes 15 mayo 2026
+  const anclaVie = new Date(2026, 4, 15);
+  let v = primerEnAnio(anclaVie, year);
 
   while (v.getFullYear() === year) {
     const dom = new Date(v); dom.setDate(v.getDate() + 2);
@@ -447,14 +454,9 @@ function generateAvenimiento(year) {
   }
 
   // ── 2. JUEVES ALTERNOS: 16:00–21:00, semana sin finde ──
-  // Ancla: jueves 21 mayo 2026
-  const anclaJue = new Date(2026, 4, 21); // 21 mayo 2026
-
-  let j = new Date(anclaJue);
-  while (j.getFullYear() > year) j.setDate(j.getDate() - 14);
-  while (j.getFullYear() < year) j.setDate(j.getDate() + 14);
-  while (j.getFullYear() === year) j.setDate(j.getDate() - 14);
-  j.setDate(j.getDate() + 14);
+  // Ancla confirmada: jueves 21 mayo 2026
+  const anclaJue = new Date(2026, 4, 21);
+  let j = primerEnAnio(anclaJue, year);
 
   while (j.getFullYear() === year) {
     events.push({
