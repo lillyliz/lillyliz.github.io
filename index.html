@@ -58,15 +58,19 @@
 
   /* VISIT LIST */
   .section-label { font-size: 12px; font-weight: 600; color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.8px; margin: 4px 0 10px; }
+  .section-label-month { font-size: 13px; font-weight: 700; color: var(--lila-dark); text-transform: uppercase; letter-spacing: 0.6px; margin: 18px 0 8px; padding-bottom: 4px; border-bottom: 1.5px solid var(--lila-light); }
   .visit-item { display: flex; align-items: center; gap: 12px; padding: 14px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--card); margin-bottom: 8px; }
   .visit-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
   .dot-mama { background: #d4537e; }
   .dot-special { background: #7f77dd; }
   .dot-birthday { background: #ef9f27; }
+  .dot-vacacion { background: #2eb89a; }
+  .dot-festivo { background: #e06c1b; }
   .visit-info { flex: 1; min-width: 0; }
   .visit-title { font-size: 14px; font-weight: 500; color: var(--text); }
   .visit-sub { font-size: 12px; color: var(--text-soft); margin-top: 2px; }
   .visit-days { font-size: 12px; font-weight: 600; color: #7f77dd; white-space: nowrap; }
+  .visit-tag { font-size: 10px; background: var(--lila-light); color: var(--lila-dark); border-radius: 20px; padding: 2px 8px; margin-left: 4px; font-weight: 500; }
 
   /* WISH SCREEN */
   .wish-intro { text-align: center; margin-bottom: 20px; }
@@ -102,6 +106,7 @@
   .form-input, .form-select { width: 100%; padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 14px; appearance: none; -webkit-appearance: none; }
   .form-input:focus, .form-select:focus { outline: none; border-color: #ed93b1; }
   .btn-save { background: #d4537e; color: white; border: none; border-radius: var(--radius-sm); padding: 14px; width: 100%; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 4px; }
+  .btn-seed { background: #7f77dd; color: white; border: none; border-radius: var(--radius-sm); padding: 12px; width: 100%; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 8px; }
   .btn-delete { background: none; border: none; color: #ccc; font-size: 18px; cursor: pointer; padding: 4px 8px; }
   .btn-delete:active { color: #d85a30; }
   .success-toast { background: #eaf3de; border: 1px solid #97c459; border-radius: var(--radius-sm); padding: 10px 14px; font-size: 13px; color: #3b6d11; margin-top: 10px; display: none; text-align: center; }
@@ -109,6 +114,10 @@
   .notif-text { font-size: 14px; color: #3c3489; font-weight: 500; }
   .notif-time { font-size: 11px; color: #7f77dd; margin-top: 3px; }
   .empty-state { text-align: center; padding: 32px 20px; color: var(--text-soft); font-size: 14px; }
+  .info-box { background: #fbeaf0; border: 1px solid #f4c0d1; border-radius: var(--radius-sm); padding: 12px 14px; font-size: 12px; color: #72243e; margin-bottom: 12px; line-height: 1.6; }
+  .legend-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 16px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-soft); }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
   /* LOADING */
   #loading { position: fixed; inset: 0; background: linear-gradient(135deg, #fbeaf0 0%, #eeedfe 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999; transition: opacity 0.4s; }
@@ -155,6 +164,14 @@
   </div>
   <div style="padding: 20px 16px 32px; flex: 1;">
     <button class="btn-back" onclick="showScreen('screen-home')">← volver</button>
+    <div class="legend-grid">
+      <div class="legend-item"><div class="legend-dot" style="background:#d4537e"></div>Con mamá (fin de semana)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#c067c4"></div>Con mamá (martes)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#2eb89a"></div>Vacaciones</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#e06c1b"></div>Festivos especiales</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ef9f27"></div>Cumpleaños</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#7f77dd"></div>Día especial</div>
+    </div>
     <div class="section-label">Próximas visitas</div>
     <div id="visit-list"></div>
   </div>
@@ -228,19 +245,24 @@
   <div style="padding: 20px 16px 32px; flex: 1;">
     <button class="btn-back" onclick="showScreen('screen-home')">← volver</button>
     <div class="tab-bar">
-      <button class="tab active" id="tab-btn-add" onclick="switchTab('tab-add')">Agregar visita</button>
-      <button class="tab" id="tab-btn-notifs" onclick="switchTab('tab-notifs')">Julieta te llama</button>
+      <button class="tab active" id="tab-btn-add" onclick="switchTab('tab-add')">+ Agregar</button>
+      <button class="tab" id="tab-btn-notifs" onclick="switchTab('tab-notifs')">Julieta</button>
       <button class="tab" id="tab-btn-list" onclick="switchTab('tab-list')">Ver todas</button>
+      <button class="tab" id="tab-btn-acuerdo" onclick="switchTab('tab-acuerdo')">Acuerdo</button>
     </div>
 
+    <!-- TAB: AGREGAR -->
     <div id="tab-add" class="admin-section active">
       <div class="form-group">
         <label class="form-label">Tipo de evento</label>
         <select class="form-select" id="event-type">
-          <option value="mama">Visita con mamá</option>
-          <option value="asistentes">Asistentes sociales</option>
-          <option value="special">Evento especial</option>
+          <option value="mama">Visita con mamá (fin de semana)</option>
+          <option value="mama-martes">Visita con mamá (martes)</option>
+          <option value="vacacion">Vacaciones</option>
+          <option value="festivo">Festivo especial</option>
           <option value="birthday">Cumpleaños</option>
+          <option value="special">Evento especial</option>
+          <option value="asistentes">Asistentes sociales</option>
         </select>
       </div>
       <div class="form-group">
@@ -257,16 +279,51 @@
       </div>
       <button class="btn-save" onclick="addEvent()">Guardar visita</button>
       <div class="success-toast" id="add-success">✓ Visita guardada — Julieta ya puede verla</div>
+
+      <div style="margin-top: 24px; border-top: 1px solid var(--border); padding-top: 16px;">
+        <div class="form-label" style="margin-bottom: 8px;">Cargar régimen anual del avenimiento</div>
+        <div class="info-box">Carga automáticamente todas las visitas del acuerdo judicial para el año seleccionado. Solo hacerlo una vez por año.</div>
+        <div class="form-group">
+          <label class="form-label">Año</label>
+          <input type="number" class="form-input" id="seed-year" value="2026" min="2025" max="2030">
+        </div>
+        <button class="btn-seed" onclick="seedAvenimiento()">📋 Cargar régimen completo</button>
+        <div class="success-toast" id="seed-success">✓ Régimen cargado</div>
+      </div>
     </div>
 
+    <!-- TAB: NOTIFS -->
     <div id="tab-notifs" class="admin-section">
       <div class="section-label">Solicitudes de Julieta</div>
       <div id="notif-list"></div>
     </div>
 
+    <!-- TAB: LISTA -->
     <div id="tab-list" class="admin-section">
       <div class="section-label">Todos los eventos</div>
       <div id="admin-event-list"></div>
+    </div>
+
+    <!-- TAB: ACUERDO -->
+    <div id="tab-acuerdo" class="admin-section">
+      <div class="section-label">Régimen del avenimiento</div>
+      <div class="info-box">
+        <strong>RIT C-552-2023 / C-1975-2023</strong><br><br>
+        <strong>Régimen ordinario:</strong><br>
+        • Fin de semana: viernes semana por medio desde las 18:45 → domingo 18:00 (otoño/invierno) / 20:00 (primavera/verano)<br>
+        • Inicio: viernes 27 sept 2024<br><br>
+        • Martes alterno: recoge martes 18:45 → retorna miércoles 14:00<br>
+        • Inicio: martes 01 oct 2024<br><br>
+        <strong>Vacaciones invierno:</strong> 1ª semana con mamá (lunes 11:00 → domingo 18:00)<br><br>
+        <strong>Vacaciones verano:</strong> 3ª y 4ª semanas de febrero con mamá<br><br>
+        <strong>Navidad:</strong> alterna — mamá: retira 24 dic 18:00 → 25 dic 20:00<br><br>
+        <strong>Año Nuevo:</strong> alterna — comienza 2024 con Javiera<br><br>
+        <strong>Fiestas Patrias:</strong> reparte por acuerdo anual<br><br>
+        <strong>Cumpleaños Julieta (25 mar):</strong> mamá 11:00–14:00 (día de semana) / 12:00–15:00 (finde)<br><br>
+        <strong>Cumpleaños mamá (09 oct):</strong> según regla de día de la semana<br><br>
+        <strong>Día de la Madre:</strong> si cae en régimen de mamá → retorna 13:00 / si no → retira 10:00–14:00<br><br>
+        <strong>Día del Niño:</strong> si no cae en régimen → sábado anterior 11:00–18:00
+      </div>
     </div>
   </div>
 </div>
@@ -294,30 +351,53 @@ const db = firebase.database();
 const MAMA_NUMBER = '56986315461';
 const PIN = '2503';
 const TYPES = {
-  mama:       { label: 'Visita con mamá',        dot: 'dot-mama',    emoji: '💜' },
-  asistentes: { label: 'Asistentes sociales',    dot: 'dot-special', emoji: '🏛️' },
-  special:    { label: 'Evento especial',         dot: 'dot-special', emoji: '🌟' },
-  birthday:   { label: 'Cumpleaños',             dot: 'dot-birthday',emoji: '🎂' }
+  mama:         { label: 'Con mamá (fin de semana)', dot: 'dot-mama',     emoji: '💜' },
+  'mama-martes':{ label: 'Con mamá (martes)',        dot: 'dot-special',  emoji: '💜' },
+  vacacion:     { label: 'Vacaciones',               dot: 'dot-vacacion', emoji: '🌊' },
+  festivo:      { label: 'Día especial',             dot: 'dot-festivo',  emoji: '🎉' },
+  birthday:     { label: 'Cumpleaños',               dot: 'dot-birthday', emoji: '🎂' },
+  special:      { label: 'Evento especial',          dot: 'dot-special',  emoji: '🌟' },
+  asistentes:   { label: 'Asistentes sociales',      dot: 'dot-special',  emoji: '🏛️' }
 };
 
-// ─── ESTADO LOCAL (caché offline) ───────────────────────────────────────────
+// ─── ESTADO LOCAL ────────────────────────────────────────────────────────────
 let localEvents = [];
 let localWishes = [];
 let selectedWishText = '';
 
-// ─── UTILIDADES DE FECHA ────────────────────────────────────────────────────
+// ─── UTILIDADES DE FECHA ─────────────────────────────────────────────────────
+function toDate(str) {
+  const [y,m,d] = str.split('-').map(Number);
+  return new Date(y, m-1, d);
+}
+
+function toStr(d) {
+  return d.getFullYear() + '-' +
+    String(d.getMonth()+1).padStart(2,'0') + '-' +
+    String(d.getDate()).padStart(2,'0');
+}
+
+function addDays(str, n) {
+  const d = toDate(str);
+  d.setDate(d.getDate() + n);
+  return toStr(d);
+}
+
 function daysUntil(dateStr) {
   const today = new Date(); today.setHours(0,0,0,0);
-  const [y,m,d] = dateStr.split('-').map(Number);
-  return Math.round((new Date(y,m-1,d) - today) / 86400000);
+  return Math.round((toDate(dateStr) - today) / 86400000);
 }
 
 function formatDate(str) {
-  const [y,m,d] = str.split('-').map(Number);
-  const date = new Date(y,m-1,d);
+  const d = toDate(str);
   const days = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
   const months = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
-  return days[date.getDay()] + ' ' + d + ' ' + months[m-1];
+  return days[d.getDay()] + ' ' + d.getDate() + ' ' + months[d.getMonth()];
+}
+
+function monthName(str) {
+  const months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  return months[toDate(str).getMonth()] + ' ' + toDate(str).getFullYear();
 }
 
 function upcomingEvents() {
@@ -330,7 +410,238 @@ function upcomingEvents() {
     .sort((a,b) => a.date.localeCompare(b.date));
 }
 
-// ─── SCREENS ─────────────────────────────────────────────────────────────────
+// ─── GENERADOR DEL AVENIMIENTO ───────────────────────────────────────────────
+// Reglas del acuerdo judicial RIT C-552-2023
+// Primer fin de semana de mamá: viernes 27 sept 2024
+// Primer martes de mamá: martes 01 oct 2024
+
+function generateAvenimiento(year) {
+  const events = [];
+
+  // ── 1. RÉGIMEN ORDINARIO: fines de semana ──
+  // Inicio: viernes 27 sept 2024. Semana por medio.
+  // Calcular el primer viernes del año dado que le corresponde a mamá.
+  const anclaFin = new Date(2024, 8, 27); // 27 sept 2024 = viernes de mamá
+  const inicioYear = new Date(year, 0, 1);
+
+  // Encontrar primer viernes >= 1 enero del año
+  let primViernesMama = new Date(anclaFin);
+  while (primViernesMama < inicioYear) {
+    primViernesMama.setDate(primViernesMama.getDate() + 14);
+  }
+  // Si saltamos demasiado (el año anterior el primer viernes válido sería en año)
+  // ajustar si es necesario que sea del año correcto
+  let viernesCursor = new Date(anclaFin);
+  // ir al primer viernes de mamá en el año
+  while (viernesCursor.getFullYear() < year) viernesCursor.setDate(viernesCursor.getDate()+14);
+  if (viernesCursor.getFullYear() > year) viernesCursor.setDate(viernesCursor.getDate()-14);
+  // ahora viernesCursor es el primer viernes de mamá en o antes del año
+  if (viernesCursor.getFullYear() < year) viernesCursor.setDate(viernesCursor.getDate()+14);
+
+  // Generar todos los fines de semana del año
+  let v = new Date(viernesCursor);
+  while (v.getFullYear() <= year) {
+    if (v.getFullYear() === year) {
+      const mes = v.getMonth() + 1;
+      // Determinar horario retorno: otoño/invierno (mar-ago) 18:00 / primavera/verano (sep-feb) 20:00
+      const esPrimaveraVerano = mes <= 2 || mes >= 9;
+      const horaRetorno = esPrimaveraVerano ? '20:00' : '18:00';
+      const domingo = new Date(v); domingo.setDate(v.getDate() + 2);
+      // Verificar que no sea semana de vacaciones de invierno (julio) ni febrero (verano)
+      // Se maneja abajo — simplemente los cargo todos y luego las vacaciones sobreescriben
+      events.push({
+        type: 'mama',
+        date: toStr(v),
+        dateEnd: toStr(domingo),
+        note: 'Retiro viernes 18:45 → domingo ' + horaRetorno,
+        confirmed: true,
+        source: 'avenimiento'
+      });
+    }
+    v.setDate(v.getDate() + 14);
+  }
+
+  // ── 2. RÉGIMEN ORDINARIO: martes alternos ──
+  // Inicio: martes 01 oct 2024. Martes por medio.
+  const anclaMar = new Date(2024, 9, 1); // 1 oct 2024
+  let martesCursor = new Date(anclaMar);
+  while (martesCursor.getFullYear() < year) martesCursor.setDate(martesCursor.getDate()+14);
+  if (martesCursor.getFullYear() > year) martesCursor.setDate(martesCursor.getDate()-14);
+  if (martesCursor.getFullYear() < year) martesCursor.setDate(martesCursor.getDate()+14);
+
+  let m = new Date(martesCursor);
+  while (m.getFullYear() <= year) {
+    if (m.getFullYear() === year) {
+      const miercoles = new Date(m); miercoles.setDate(m.getDate() + 1);
+      events.push({
+        type: 'mama-martes',
+        date: toStr(m),
+        dateEnd: toStr(miercoles),
+        note: 'Retiro martes 18:45 → miércoles 14:00',
+        confirmed: true,
+        source: 'avenimiento'
+      });
+    }
+    m.setDate(m.getDate() + 14);
+  }
+
+  // ── 3. VACACIONES DE INVIERNO ──
+  // 1ª semana de julio con mamá (lunes 11:00 → domingo 18:00)
+  // Encontrar primer lunes de julio
+  const julioInicio = new Date(year, 6, 1);
+  while (julioInicio.getDay() !== 1) julioInicio.setDate(julioInicio.getDate()+1);
+  const lunesInv = toStr(julioInicio);
+  const domInv = addDays(lunesInv, 6);
+  events.push({
+    type: 'vacacion',
+    date: lunesInv,
+    dateEnd: domInv,
+    note: 'Vacaciones de invierno con mamá — retiro lunes 11:00 → domingo 18:00',
+    confirmed: true,
+    source: 'avenimiento'
+  });
+
+  // ── 4. VACACIONES DE VERANO ──
+  // 3ª y 4ª semanas de febrero con mamá (lunes 11:00 → último domingo 18:00)
+  // 3ª semana = lunes de la 3ª semana de febrero
+  const feb1 = new Date(year, 1, 1);
+  // 1ª semana: días 1-7, 2ª: 8-14, 3ª: 15-21, 4ª: 22-28
+  // Lunes de la 3ª semana
+  const feb15 = new Date(year, 1, 15);
+  while (feb15.getDay() !== 1) feb15.setDate(feb15.getDate()+1);
+  const lunesVer = toStr(feb15);
+  // 4ª semana termina el domingo siguiente
+  const domVer = addDays(lunesVer, 13);
+  events.push({
+    type: 'vacacion',
+    date: lunesVer,
+    dateEnd: domVer,
+    note: 'Vacaciones de verano con mamá (3ª y 4ª sem febrero) — retiro lunes 11:00 → domingo 18:00',
+    confirmed: true,
+    source: 'avenimiento'
+  });
+
+  // ── 5. NAVIDAD ──
+  // Alterna: 2024 comienza con mamá → años pares con mamá, impares con Javiera
+  // 2024 (par) = mamá, 2025 (impar) = Javiera, 2026 (par) = mamá
+  const navConMama = year % 2 === 0;
+  if (navConMama) {
+    events.push({
+      type: 'festivo',
+      date: year + '-12-24',
+      dateEnd: year + '-12-25',
+      note: 'Navidad con mamá — retiro 24 dic 18:00 → 25 dic 20:00',
+      confirmed: true,
+      source: 'avenimiento'
+    });
+  }
+
+  // ── 6. AÑO NUEVO ──
+  // Alterna: 2024 con Javiera → años pares con Javiera, impares con mamá
+  const añoNuevoConMama = year % 2 !== 0;
+  if (añoNuevoConMama) {
+    events.push({
+      type: 'festivo',
+      date: year + '-12-31',
+      dateEnd: (year+1) + '-01-01',
+      note: 'Año Nuevo con mamá — retiro 31 dic 18:00 → 1 ene 20:00',
+      confirmed: true,
+      source: 'avenimiento'
+    });
+  }
+
+  // ── 7. CUMPLEAÑOS JULIETA (25 marzo) ──
+  const cumJul = new Date(year, 2, 25);
+  const esFinde = cumJul.getDay() === 0 || cumJul.getDay() === 6;
+  events.push({
+    type: 'birthday',
+    date: year + '-03-25',
+    note: esFinde
+      ? '🎂 Cumpleaños Julieta — mamá 12:00–15:00'
+      : '🎂 Cumpleaños Julieta — mamá 11:00–14:00',
+    confirmed: true,
+    source: 'avenimiento'
+  });
+
+  // ── 8. CUMPLEAÑOS MAMÁ (9 octubre) ──
+  const cumMama = new Date(year, 9, 9);
+  const diaMama = cumMama.getDay(); // 0=dom, 1=lun...6=sáb
+  let notaCumMama = '';
+  if (diaMama === 6 || diaMama === 0) {
+    notaCumMama = '🎉 Cumpleaños mamá — Julieta 11:00–20:00';
+  } else if (diaMama === 1 || diaMama === 4 || diaMama === 5) {
+    notaCumMama = '🎉 Cumpleaños mamá — Julieta antes/después del colegio (con pernoctación si carga escolar lo permite)';
+  } else {
+    notaCumMama = '🎉 Cumpleaños mamá — confirmar con Javiera 5 días antes';
+  }
+  events.push({
+    type: 'birthday',
+    date: year + '-10-09',
+    note: notaCumMama,
+    confirmed: true,
+    source: 'avenimiento'
+  });
+
+  // ── 9. DÍA DE LA MADRE (segundo domingo de mayo) ──
+  const mayo1 = new Date(year, 4, 1);
+  while (mayo1.getDay() !== 0) mayo1.setDate(mayo1.getDate()+1);
+  mayo1.setDate(mayo1.getDate() + 7); // segundo domingo
+  events.push({
+    type: 'festivo',
+    date: toStr(mayo1),
+    note: 'Día de la Madre — mamá hasta las 13:00 (si es su fin de semana) o retira 10:00–14:00',
+    confirmed: true,
+    source: 'avenimiento'
+  });
+
+  // ── 10. DÍA DEL NIÑO (tercer domingo de agosto en Chile) ──
+  const ago1 = new Date(year, 7, 1);
+  while (ago1.getDay() !== 0) ago1.setDate(ago1.getDate()+1);
+  ago1.setDate(ago1.getDate() + 14); // tercer domingo
+  // Si no cae en régimen ordinario → sábado anterior 11:00–18:00
+  const sabAnterior = new Date(ago1); sabAnterior.setDate(ago1.getDate()-1);
+  events.push({
+    type: 'festivo',
+    date: toStr(sabAnterior),
+    note: 'Día del Niño — mamá 11:00–18:00 (si no es su fin de semana ordinario)',
+    confirmed: true,
+    source: 'avenimiento'
+  });
+
+  // ── 11. FIESTAS PATRIAS — recordatorio ──
+  events.push({
+    type: 'festivo',
+    date: year + '-09-18',
+    note: 'Fiestas Patrias — coordinar distribución con Javiera',
+    confirmed: true,
+    source: 'avenimiento'
+  });
+
+  return events;
+}
+
+// ─── SEED: CARGAR AVENIMIENTO ────────────────────────────────────────────────
+function seedAvenimiento() {
+  const year = parseInt(document.getElementById('seed-year').value) || 2026;
+  const events = generateAvenimiento(year);
+
+  let count = 0;
+  events.forEach(e => {
+    db.ref('events').push(e)
+      .then(() => {
+        count++;
+        if (count === events.length) {
+          const toast = document.getElementById('seed-success');
+          toast.textContent = '✓ ' + count + ' eventos cargados para ' + year;
+          toast.style.display = 'block';
+          setTimeout(() => toast.style.display = 'none', 4000);
+        }
+      })
+      .catch(err => alert('Error: ' + err.message));
+  });
+}
+
+// ─── SCREENS ──────────────────────────────────────────────────────────────────
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -340,10 +651,12 @@ function showScreen(id) {
   if (id === 'screen-admin')   renderAdmin();
 }
 
-// ─── HOME ─────────────────────────────────────────────────────────────────
+// ─── HOME ─────────────────────────────────────────────────────────────────────
 function renderHome() {
   const upcoming = upcomingEvents();
-  const next = upcoming[0];
+  // Priorizar visitas de mamá (tipo mama o mama-martes) para el countdown
+  const nextMama = upcoming.find(e => e.type === 'mama' || e.type === 'mama-martes' || e.type === 'vacacion');
+  const next = nextMama || upcoming[0];
   const daysDiv = document.getElementById('days-display');
   const dateDiv = document.getElementById('next-date-display');
 
@@ -366,10 +679,10 @@ function renderHome() {
   } else {
     daysDiv.innerHTML = '<div class="days-number">' + diff + '</div><div class="days-label">días para ver a tu mami 💜</div>';
   }
-  dateDiv.textContent = dateStr + note;
+  dateDiv.textContent = dateStr;
 }
 
-// ─── VISITAS ──────────────────────────────────────────────────────────────
+// ─── VISITAS ──────────────────────────────────────────────────────────────────
 function renderVisitas() {
   const list = document.getElementById('visit-list');
   const upcoming = upcomingEvents();
@@ -377,35 +690,52 @@ function renderVisitas() {
     list.innerHTML = '<div class="empty-state">Aún no hay visitas cargadas 🌸</div>';
     return;
   }
-  list.innerHTML = upcoming.map(e => {
-    const t = TYPES[e.type] || TYPES.mama;
-    const diff = daysUntil(e.date);
-    const countStr = diff === 0 ? '¡Hoy!' : diff === 1 ? 'Mañana' : 'En ' + diff + ' días';
-    const dateStr = e.dateEnd
-      ? formatDate(e.date) + ' → ' + formatDate(e.dateEnd)
-      : formatDate(e.date);
-    return '<div class="visit-item">' +
-      '<div class="visit-dot ' + t.dot + '"></div>' +
-      '<div class="visit-info">' +
-        '<div class="visit-title">' + t.emoji + ' ' + t.label + '</div>' +
-        '<div class="visit-sub">' + dateStr + (e.note ? ' · ' + e.note : '') + '</div>' +
-      '</div>' +
-      '<div class="visit-days">' + countStr + '</div>' +
-    '</div>';
-  }).join('');
+
+  // Agrupar por mes
+  const byMonth = {};
+  upcoming.forEach(e => {
+    const key = e.date.slice(0,7); // YYYY-MM
+    if (!byMonth[key]) byMonth[key] = [];
+    byMonth[key].push(e);
+  });
+
+  let html = '';
+  Object.keys(byMonth).sort().forEach(monthKey => {
+    const mes = monthName(monthKey + '-01');
+    html += '<div class="section-label-month">' + mes + '</div>';
+    byMonth[monthKey].forEach(e => {
+      const t = TYPES[e.type] || TYPES.mama;
+      const diff = daysUntil(e.date);
+      let countStr;
+      if (diff === 0) countStr = '¡Hoy!';
+      else if (diff === 1) countStr = 'Mañana';
+      else if (diff < 0) countStr = 'Pasado';
+      else countStr = 'En ' + diff + ' d';
+      const dateStr = e.dateEnd
+        ? formatDate(e.date) + ' → ' + formatDate(e.dateEnd)
+        : formatDate(e.date);
+      const sourceTag = e.source === 'avenimiento' ? '<span class="visit-tag">acuerdo</span>' : '';
+      html += '<div class="visit-item">' +
+        '<div class="visit-dot ' + t.dot + '"></div>' +
+        '<div class="visit-info">' +
+          '<div class="visit-title">' + t.emoji + ' ' + t.label + sourceTag + '</div>' +
+          '<div class="visit-sub">' + dateStr + (e.note ? ' · ' + e.note : '') + '</div>' +
+        '</div>' +
+        '<div class="visit-days">' + countStr + '</div>' +
+      '</div>';
+    });
+  });
+
+  list.innerHTML = html;
 }
 
-// ─── WISH ─────────────────────────────────────────────────────────────────
+// ─── WISH ─────────────────────────────────────────────────────────────────────
 function selectWish(text) {
   selectedWishText = text;
   document.getElementById('wish-msg').textContent = '"' + text + '"';
   document.getElementById('wish-confirm').style.display = 'block';
-
-  // Guardar en Firebase
   const wish = { text, ts: new Date().toISOString() };
   db.ref('wishes').push(wish).catch(console.error);
-
-  // Notificación push si está permitida
   if ('Notification' in window && Notification.permission === 'granted') {
     new Notification('Julieta quiere verte 🐱', { body: text });
   }
@@ -416,7 +746,7 @@ function sendWish() {
   window.open('https://wa.me/' + MAMA_NUMBER + '?text=' + msg, '_blank');
 }
 
-// ─── PIN ──────────────────────────────────────────────────────────────────
+// ─── PIN ───────────────────────────────────────────────────────────────────────
 let pinBuffer = '';
 
 function showPin() {
@@ -450,22 +780,23 @@ function pinClear() {
 
 function updatePinDots() {
   for (let i = 0; i < 4; i++) {
-    const el = document.getElementById('pd' + i);
-    el.classList.toggle('filled', i < pinBuffer.length);
+    document.getElementById('pd' + i).classList.toggle('filled', i < pinBuffer.length);
   }
 }
 
-// ─── ADMIN TABS ───────────────────────────────────────────────────────────
+// ─── ADMIN TABS ────────────────────────────────────────────────────────────────
 function switchTab(id) {
   document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  document.getElementById('tab-btn-' + id.replace('tab-','')).classList.add('active');
+  const btnId = 'tab-btn-' + id.replace('tab-','');
+  const btnEl = document.getElementById(btnId);
+  if (btnEl) btnEl.classList.add('active');
   if (id === 'tab-notifs') renderNotifs();
   if (id === 'tab-list')   renderAdminList();
 }
 
-// ─── ADMIN — AGREGAR EVENTO ───────────────────────────────────────────────
+// ─── ADMIN — AGREGAR EVENTO ────────────────────────────────────────────────────
 function addEvent() {
   const type    = document.getElementById('event-type').value;
   const date    = document.getElementById('event-date').value;
@@ -488,10 +819,8 @@ function addEvent() {
     .catch(err => alert('Error al guardar: ' + err.message));
 }
 
-// ─── ADMIN — LISTA DE EVENTOS ─────────────────────────────────────────────
-function renderAdmin() {
-  renderAdminList();
-}
+// ─── ADMIN — LISTA ─────────────────────────────────────────────────────────────
+function renderAdmin() { renderAdminList(); }
 
 function renderAdminList() {
   const list = document.getElementById('admin-event-list');
@@ -505,10 +834,11 @@ function renderAdminList() {
     const dateStr = e.dateEnd
       ? formatDate(e.date) + ' → ' + formatDate(e.dateEnd)
       : formatDate(e.date);
+    const tag = e.source === 'avenimiento' ? '<span class="visit-tag">acuerdo</span>' : '';
     return '<div class="visit-item">' +
       '<div class="visit-dot ' + t.dot + '"></div>' +
       '<div class="visit-info">' +
-        '<div class="visit-title">' + t.label + '</div>' +
+        '<div class="visit-title">' + t.label + tag + '</div>' +
         '<div class="visit-sub">' + dateStr + (e.note ? ' · ' + e.note : '') + '</div>' +
       '</div>' +
       '<button class="btn-delete" onclick="deleteEvent(\'' + e._key + '\')">✕</button>' +
@@ -517,18 +847,18 @@ function renderAdminList() {
 }
 
 function deleteEvent(key) {
+  if (!confirm('¿Eliminar este evento?')) return;
   db.ref('events/' + key).remove().catch(console.error);
 }
 
-// ─── ADMIN — SOLICITUDES ──────────────────────────────────────────────────
+// ─── ADMIN — SOLICITUDES ───────────────────────────────────────────────────────
 function renderNotifs() {
   const list = document.getElementById('notif-list');
   if (!localWishes.length) {
     list.innerHTML = '<div class="empty-state">Julieta aún no ha enviado solicitudes 🌸</div>';
     return;
   }
-  const sorted = [...localWishes].reverse();
-  list.innerHTML = sorted.map(w => {
+  list.innerHTML = [...localWishes].reverse().map(w => {
     const dt = new Date(w.ts);
     const timeStr = dt.toLocaleDateString('es-CL') + ' ' + dt.toLocaleTimeString('es-CL', {hour:'2-digit',minute:'2-digit'});
     return '<div class="notif-item">' +
@@ -538,64 +868,44 @@ function renderNotifs() {
   }).join('');
 }
 
-// ─── FIREBASE LISTENERS (tiempo real) ────────────────────────────────────
+// ─── FIREBASE LISTENERS ────────────────────────────────────────────────────────
 function initFirebase() {
-  // Eventos
   db.ref('events').on('value', snap => {
     localEvents = [];
     snap.forEach(child => {
       localEvents.push({ ...child.val(), _key: child.key });
     });
-    // Cargar eventos por defecto si está vacío
-    if (localEvents.length === 0) seedDefaultEvents();
     renderHome();
     renderVisitas();
     renderAdminList();
   });
 
-  // Solicitudes de Julieta
   db.ref('wishes').on('value', snap => {
     localWishes = [];
-    snap.forEach(child => {
-      localWishes.push(child.val());
-    });
+    snap.forEach(child => localWishes.push(child.val()));
     renderNotifs();
   });
 }
 
-// ─── EVENTOS POR DEFECTO ──────────────────────────────────────────────────
-function seedDefaultEvents() {
-  const defaults = [
-    { type: 'mama',       date: '2026-05-01', dateEnd: '2026-05-03', note: 'Fin de semana juntas',         confirmed: true },
-    { type: 'asistentes', date: '2026-05-07', note: 'Visita asistentes sociales',                          confirmed: true },
-    { type: 'mama',       date: '2026-05-15', dateEnd: '2026-05-16', note: 'Fin de semana con mamá',       confirmed: true },
-    { type: 'mama',       date: '2026-05-22', note: 'Jueves con mamá',                                     confirmed: true },
-    { type: 'mama',       date: '2026-05-29', dateEnd: '2026-05-30', note: 'Fin de semana con mamá',       confirmed: true }
-  ];
-  defaults.forEach(e => db.ref('events').push(e));
-}
-
-// ─── OFFLINE DETECTION ────────────────────────────────────────────────────
+// ─── OFFLINE ───────────────────────────────────────────────────────────────────
 window.addEventListener('online',  () => document.getElementById('offline-banner').style.display = 'none');
 window.addEventListener('offline', () => document.getElementById('offline-banner').style.display = 'block');
 
-// ─── NOTIFICACIONES PUSH ──────────────────────────────────────────────────
+// ─── NOTIFICACIONES ────────────────────────────────────────────────────────────
 if ('Notification' in window && Notification.permission === 'default') {
   Notification.requestPermission();
 }
 
-// ─── SERVICE WORKER ───────────────────────────────────────────────────────
+// ─── SERVICE WORKER ────────────────────────────────────────────────────────────
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js').catch(console.error);
 }
 
-// ─── INIT ─────────────────────────────────────────────────────────────────
+// ─── INIT ──────────────────────────────────────────────────────────────────────
 initFirebase();
 showScreen('screen-home');
-
-setTimeout(() => {
-  document.getElementById('loading').classList.add('hidden');
-}, 1200);
+setTimeout(() => document.getElementById('loading').classList.add('hidden'), 1200);
 </script>
 </body>
 </html>
+
