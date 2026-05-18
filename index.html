@@ -809,5 +809,16 @@ initFirebase();
 showScreen('screen-home');
 setTimeout(() => document.getElementById('loading').classList.add('hidden'), 1200);
 </script>
+<script>
+  // Seguridad básica
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('copy', e => e.preventDefault());
+  document.addEventListener('cut', e => e.preventDefault());
+  document.addEventListener('keydown', e => {
+    if (e.key === 'F12') e.preventDefault();
+    if (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key)) e.preventDefault();
+    if (e.ctrlKey && e.key === 'U') e.preventDefault();
+  });
+</script>
 </body>
 </html>
