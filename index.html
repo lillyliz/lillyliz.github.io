@@ -298,6 +298,7 @@
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 
 <script>
 // ─── FIREBASE CONFIG ────────────────────────────────────────────────────────
@@ -312,7 +313,10 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
 const db = firebase.database();
+
+auth.signInAnonymously().catch(console.error);
 
 // ─── CONSTANTES ─────────────────────────────────────────────────────────────
 const MAMA_NUMBER = '56986315461';
