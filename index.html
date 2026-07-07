@@ -378,9 +378,10 @@ function upcomingEvents() {
 
 // ─── RÉGIMEN HARDCODEADO 2026 ────────────────────────────────────────────────
 // Todas las fechas verificadas manualmente.
-// Ancla finde: vie 29 mayo 2026. Ancla jueves: 21 mayo 2026.
+// Ancla finde: vie 10 jul 2026. Ancla jueves: jue 16 jul 2026.
+// Reacomodado el 7 jul 2026 porque las visitas ordinarias se movieron de fecha.
+// Vacaciones de invierno (6-12 jul) ELIMINADAS — ya no aplican.
 // Conflictos resueltos:
-//   - Finde 10-12 jul suspendido por vacaciones invierno (6-12 jul)
 //   - Finde 25-27 dic suspendido; Navidad es régimen extraordinario (24-25 dic)
 //   - Jueves 31 dic suspendido; Año Nuevo le toca a Javiera en 2026
 
@@ -388,14 +389,11 @@ function buildRegimen2026() {
   const ev = [];
 
   // ── FINES DE SEMANA ──────────────────────────────────────────────────────
-  // vie→dom cada 14 días desde 29 mayo. Omitidos: 10-12 jul (vacaciones), 25-27 dic (Navidad)
+  // vie→dom cada 14 días desde 10 jul. Omitido: 25-27 dic (Navidad cubre ese período)
   const findesVie = [
-    '2026-05-29','2026-06-12','2026-06-26',
-    // '2026-07-10' OMITIDO — vacaciones invierno
-    '2026-07-24','2026-08-07','2026-08-21',
-    '2026-09-04','2026-09-18','2026-10-02',
-    '2026-10-16','2026-10-30','2026-11-13',
-    '2026-11-27','2026-12-11',
+    '2026-07-10','2026-07-24','2026-08-07','2026-08-21',
+    '2026-09-04','2026-09-18','2026-10-02','2026-10-16',
+    '2026-10-30','2026-11-13','2026-11-27','2026-12-11',
     // '2026-12-25' OMITIDO — Navidad cubre ese período
   ];
 
@@ -416,14 +414,11 @@ function buildRegimen2026() {
   });
 
   // ── JUEVES ALTERNOS ──────────────────────────────────────────────────────
-  // 16:00–21:00 cada 14 días desde 21 mayo. Omitido: 31 dic (Año Nuevo con Javiera)
+  // 16:00–21:00 cada 14 días desde 16 jul. Omitido: 31 dic (Año Nuevo con Javiera)
   const juevesDates = [
-    '2026-05-21','2026-06-04','2026-06-18',
-    '2026-07-02','2026-07-16','2026-07-30',
-    '2026-08-13','2026-08-27','2026-09-10',
-    '2026-09-24','2026-10-08','2026-10-22',
-    '2026-11-05','2026-11-19','2026-12-03',
-    '2026-12-17',
+    '2026-07-16','2026-07-30','2026-08-13','2026-08-27',
+    '2026-09-10','2026-09-24','2026-10-08','2026-10-22',
+    '2026-11-05','2026-11-19','2026-12-03','2026-12-17',
     // '2026-12-31' OMITIDO — Año Nuevo con Javiera
   ];
 
@@ -435,17 +430,6 @@ function buildRegimen2026() {
       confirmed: true,
       source: 'avenimiento'
     });
-  });
-
-  // ── VACACIONES INVIERNO ──────────────────────────────────────────────────
-  // Lunes 6 jul → domingo 12 jul (1ª semana de julio)
-  ev.push({
-    type: 'vacacion',
-    date: '2026-07-06',
-    dateEnd: '2026-07-12',
-    note: 'Vacaciones de invierno con mamá — retiro lunes 11:00 → domingo 18:00',
-    confirmed: true,
-    source: 'avenimiento'
   });
 
   // ── NAVIDAD 2026 (año par → mamá) ────────────────────────────────────────
